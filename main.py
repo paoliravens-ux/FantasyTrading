@@ -40,9 +40,13 @@ def print_rosters(data):
             flag = f" [{p.injury_status}]" if p.injury_status not in ("ACTIVE", "NORMAL") else ""
             print(f"  {p.position:<4} {p.name:<22} {p.weighted_ppg:5.1f} ppg x {p.games_left:>2}"
                   f"  ROS {p.ros_value:6.1f}  VOR {p.vor:6.1f}{flag}")
-    print("\nReplacement level (best free agent ROS):")
-    for pos, value in data.replacement.items():
-        print(f"  {pos:<4} {value:6.1f}")
+    print(f"\nWeek {data.current_week} through week {config.FINAL_WEEK}")
+    print("Replacement level (best free agent ROS):")
+    for pos in config.POSITIONS:
+        fas = [p for p in data.free_agents if p.position == pos]
+        best = max(fas, key=lambda p: p.ros_value, default=None)
+        detail = f"{best.name}, {best.weighted_ppg:.1f} ppg x {best.games_left}" if best else "none found"
+        print(f"  {pos:<4} {data.replacement.get(pos, 0.0):6.1f}  ({len(fas)} free agents; best: {detail})")
 
 
 def print_side(side):
